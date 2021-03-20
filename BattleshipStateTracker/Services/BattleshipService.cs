@@ -1,5 +1,6 @@
 ﻿using BattleshipStateTracker.Interfaces;
 using BattleshipStateTracker.Models;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,9 +39,34 @@ namespace BattleshipStateTracker.Controllers.Services
             _repositotyService.CreateBoard(playerName, board);
         }
 
-        public void AddBattleship(int[,] boardSize)
+        public async Task AddBattleship(Ship ship)
         {
-           // _board = new bool[boardSize, boardSize];
+            Console.WriteLine("0");
+            var boards = _repositotyService.GetBoards(ship).Result;
+            Console.WriteLine("1");
+            Console.WriteLine(JsonConvert.SerializeObject(boards));
+            Console.WriteLine("1a");
+            var board = boards.FirstOrDefault();
+            Console.WriteLine("10");
+            Console.WriteLine(JsonConvert.SerializeObject(board));
+            Console.WriteLine("11");
+            try
+            {
+                Console.WriteLine("12");
+                board.Ships = new List<Ship>
+                {
+                    ship
+                };
+                Console.WriteLine(JsonConvert.SerializeObject(board));
+            } catch (Exception ex)
+            {
+                Console.WriteLine("13");
+                Console.WriteLine(ex.Message);
+            }
+
+            Console.WriteLine("14");
+            Console.WriteLine(JsonConvert.SerializeObject(board));
+            await _repositotyService.AddShip(board);
         }
 
     }

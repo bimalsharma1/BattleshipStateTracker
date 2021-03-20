@@ -4,11 +4,13 @@ namespace BattleshipStateTracker.Models
 {
     public class Ship
     {
+        [DataMember(Name = "boardName")]
+        public string BoardName { get; set; }
         [DataMember(Name = "shipName")]
-        public string shipName { get; set; }
-        [DataMember(Name = "xPos")]
+        public string ShipName { get; set; }
+        [DataMember(Name = "xPosition")]
         public int XPosition { get; set; }
-        [DataMember(Name = "yPos")]
+        [DataMember(Name = "yPosition")]
         public int YPosition { get; set; }
     }
 }

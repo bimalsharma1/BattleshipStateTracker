@@ -13,6 +13,7 @@
     <PackageReference Include="Amazon.Lambda.Core" Version="1.2.0" />
     <PackageReference Include="AWSSDK.DynamoDBv2" Version="3.5.4.37" />
     <PackageReference Include="AWSSDK.DynamoDBv2.Converters" Version="2.0.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
 </Project>

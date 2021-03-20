@@ -7,6 +7,7 @@ namespace BattleshipStateTracker.Interfaces
 	public interface IRepositoryService
 	{
 		public Task CreateBoard(string name, List<Position> board);
-		public Task AddShip(string name, int[,] position);
+		public Task<IEnumerable<BattleshipBoard>> GetBoards(Ship ship);
+		public Task AddShip(BattleshipBoard board);
 	}
 }

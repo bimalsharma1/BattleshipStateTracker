@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using BattleshipStateTracker.Interfaces;
+using BattleshipStateTracker.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BattleshipStateTracker.Controllers
@@ -33,19 +34,20 @@ namespace BattleshipStateTracker.Controllers
         // POST api/values
         // POST api/values
         [HttpPost]
-        public string Post([FromBody] string name)
+        public string Post([FromBody] BoardName name)
         {
             const int boardSize = 10; // Fix board size
             Console.WriteLine("inside controller");
-            _battleshipService.CreateBoard(name, boardSize);
+            _battleshipService.CreateBoard(name.Name, boardSize);
             Console.WriteLine("success");
             return "success";
         }
 
         // PUT api/values/5
-        [HttpPut("{id}")]
-        public void Put(int id, [FromBody]string value)
+        [HttpPut]
+        public void Put([FromBody] Ship ship)
         {
+            _battleshipService.AddBattleship(ship);
         }
 
         // DELETE api/values/5
