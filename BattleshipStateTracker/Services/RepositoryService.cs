@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using BattleshipStateTracker.Models;
 using BattleshipStateTracker.Interfaces;
 using System;
+using System.Collections.Generic;
 
 namespace BattleshipStateTracker.Services
 {
@@ -52,10 +53,11 @@ namespace BattleshipStateTracker.Services
 			this.DDBContext = new DynamoDBContext(ddbClient, config);
 		}
 
-		public async Task CreateBoard(string name, bool[,] board)
+		public async Task CreateBoard(string name, List<Position> board)
 		{
             BattleshipBoard battleshipBoard = new BattleshipBoard
             {
+				Id = new Guid(),
                 Name = name,
                 Board = board
             };
@@ -63,10 +65,11 @@ namespace BattleshipStateTracker.Services
 			// var _lps = JsonConvert.DeserializeObject<LP>(lp);
 			try
 			{
-				await DDBContext.SaveAsync<BattleshipBoard>(battleshipBoard);
+				await DDBContext.SaveAsync(battleshipBoard);
 			} catch (Exception ex)
             {
 				Console.WriteLine(ex.Message);
+				Console.WriteLine("After error message");
             }
 			// you can add scan conditions, or leave empty
 			//	var search = DDBContext.ScanAsync<BattleshipBoard>(conditions);

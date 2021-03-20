@@ -21,9 +21,9 @@
       ],
       "Description": "If true then the DynamoDB LPging table will be created with the CloudFormation stack."
     },
-    "BattleshipTableName": {
+    "BattleshipBoardName": {
       "Type": "String",
-      "Default": "BattleshipTable",
+      "Default": "BattleshipBoard",
       "Description": "Name of DynamoDB table used to store the Battleship user information. If left blank a new table will be created.",
       "MinLength": "0"
     },
@@ -41,7 +41,7 @@
     }
   },
   "Conditions": {
-     "CreateBattleshipTable": {
+     "CreateBattleshipBoardTable": {
       "Fn::Equals": [
         {
           "Ref": "ShouldCreateTable"
@@ -52,7 +52,7 @@
     "TableNameGenerated": {
       "Fn::Equals": [
         {
-          "Ref": "BattleshipTableName"
+          "Ref": "BattleshipBoardName"
         },
         ""
       ]
@@ -69,7 +69,9 @@
         "Timeout": 30,
         "Role": null,
         "Policies": [
-          "AWSLambda_FullAccess"
+          "AWSLambda_FullAccess",
+          "AWSLambdaDynamoDBExecutionRole",
+          "AmazonDynamoDBFullAccess"
         ],
         "Events": {
           "ProxyResource": {
@@ -89,9 +91,9 @@
         }
       }
     },
-    "BattleshipTable": {
+    "BattleshipBoard": {
       "Type": "AWS::DynamoDB::Table",
-      "Condition": "CreateBattleshipTable",
+      "Condition": "CreateBattleshipBoardTable",
       "Properties": {
         "TableName": {
           "Fn::If": [
@@ -100,7 +102,7 @@
               "Ref": "AWS::NoValue"
             },
             {
-              "Ref": "BattleshipTableName"
+              "Ref": "BattleshipBoardName"
             }
           ]
         },
@@ -134,15 +136,15 @@
         "Fn::Sub": "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
       }
     },
-    "BattleshipTable": {
+    "BattleshipBoard": {
       "Value": {
         "Fn::If": [
-          "CreateBattleshipTable",
+          "CreateBattleshipBoardTable",
           {
-            "Ref": "BattleshipTable"
+            "Ref": "BattleshipBoard"
           },
           {
-            "Ref": "BattleshipTableName"
+            "Ref": "BattleshipBoardName"
           }
         ]
       }

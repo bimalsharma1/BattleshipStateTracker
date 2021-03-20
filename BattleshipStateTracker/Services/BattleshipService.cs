@@ -1,4 +1,5 @@
 ﻿using BattleshipStateTracker.Interfaces;
+using BattleshipStateTracker.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,8 +11,6 @@ namespace BattleshipStateTracker.Controllers.Services
     {
         private IRepositoryService _repositotyService;
 
-        private bool[,] _board;
-
         public BattleshipService(IRepositoryService repositoryService)
         {
             _repositotyService = repositoryService;
@@ -20,10 +19,23 @@ namespace BattleshipStateTracker.Controllers.Services
         // Board size is customisable, it will always be a square grid.
         public void CreateBoard(string playerName, int boardSize)
         {
-            _board = new bool[boardSize, boardSize];
+            Console.WriteLine(boardSize.ToString());
+            List<Position> board = new List<Position>();
+            for (int i=0;i<10;i++)
+            {
+                for (int j = 0; j < 10; j++)
+                {
+                    board.Add(new Position
+                    {
+                        XPosition = i,
+                        YPosition = j,
+                        Bombed = false
+                    });
+                }
+            }
             Console.WriteLine("create board");
-            Console.WriteLine(_board.ToString());
-            _repositotyService.CreateBoard(playerName, _board);
+            Console.WriteLine(board.ToString());
+            _repositotyService.CreateBoard(playerName, board);
         }
 
         public void AddBattleship(int[,] boardSize)
