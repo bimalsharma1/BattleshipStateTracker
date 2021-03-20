@@ -20,7 +20,6 @@ namespace BattleshipStateTracker.Controllers.Services
         // Board size is customisable, it will always be a square grid.
         public void CreateBoard(string playerName, int boardSize)
         {
-            Console.WriteLine(boardSize.ToString());
             List<Position> board = new List<Position>();
             for (int i = 1; i <= boardSize; i++)
             {
@@ -34,31 +33,28 @@ namespace BattleshipStateTracker.Controllers.Services
                     });
                 }
             }
-            Console.WriteLine("create board");
-            Console.WriteLine(board.ToString());
             _repositotyService.CreateBoard(playerName, board);
         }
 
         public async Task AddBattleship(Ship ship)
         {
-            var boards = _repositotyService.GetBoards(ship.BoardName).Result;
-            var board = boards.FirstOrDefault();
+            
             try
             {
+                var boards = _repositotyService.GetBoards(ship.BoardName).Result;
+                var board = boards.FirstOrDefault();
                 board.Ships = new List<Ship>
                 {
                     ship
                 };
 
                 board.Board = PlaceShipOnBoard(board.Board, ship);
-                Console.WriteLine(JsonConvert.SerializeObject(board));
+                await _repositotyService.AddShip(board);
+
             } catch (Exception ex)
             {
-                throw new InvalidOperationException("Cannot find the board");
-                //Console.WriteLine(ex.Message);
+                throw new InvalidOperationException($"Cannot find the board {ex.Message}");
             }
-            Console.WriteLine(JsonConvert.SerializeObject(board));
-            await _repositotyService.AddShip(board);
         }
 
         private List<Position> PlaceShipOnBoard(List<Position> board, Ship ship)

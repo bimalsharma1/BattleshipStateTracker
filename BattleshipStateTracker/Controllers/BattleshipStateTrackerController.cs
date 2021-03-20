@@ -17,14 +17,15 @@ namespace BattleshipStateTracker.Controllers
         {
             _battleshipService = battleshipService;
         }
-        // GET api/values
+        // GET api/BattleshipStateTracker
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "This is the Battleship State Tracker", "value2" };
+            return new string[] { "This is the Battleship State Tracker", 
+                "You can call APIs to create a board, add a ship and attack" };
         }
 
-        // GET api/values/name/1/3
+        // GET api/BattleshipStateTracker/name/1/3
         [HttpGet("{boardName}/{xPosition}/{yPosition}")]
         public string Get(string boardName, int xPosition, int yPosition)
         {
@@ -32,23 +33,21 @@ namespace BattleshipStateTracker.Controllers
             return _battleshipService.Attack(boardName, attackPosition);
         }
 
-        // POST api/values
-        // POST api/values
+        // POST api/BattleshipStateTracker
         [HttpPost]
         public string Post([FromBody] BoardName name)
         {
             const int boardSize = 10; // Fix board size
-            Console.WriteLine("inside controller");
             _battleshipService.CreateBoard(name.Name, boardSize);
-            Console.WriteLine("success");
             return "success";
         }
 
-        // PUT api/values/5
+        // PUT api/BattleshipStateTracker/
         [HttpPut]
-        public void Put([FromBody] Ship ship)
+        public string Put([FromBody] Ship ship)
         {
             _battleshipService.AddBattleship(ship);
+            return "success";
         }
     }
 }
