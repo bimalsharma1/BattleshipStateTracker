@@ -4,6 +4,6 @@
     {
         public int XPosition { get; set; }
         public int YPosition { get; set; }
-        public bool Bombed { get; set; }
+        public bool HasShip { get; set; }
     }
 }

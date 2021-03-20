@@ -75,12 +75,11 @@ namespace BattleshipStateTracker.Services
             }
 		}
 
-		public async Task<IEnumerable<BattleshipBoard>> GetBoards(Ship ship)
+		public async Task<IEnumerable<BattleshipBoard>> GetBoards(string boardName)
 		{
-            Console.WriteLine(JsonConvert.SerializeObject(ship));
 			var conditions = new List<ScanCondition>
 			{
-				new ScanCondition("Id", ScanOperator.Equal, ship.BoardName.Trim())
+				new ScanCondition("Id", ScanOperator.Equal, boardName?.Trim())
 			};
 			var search = DDBContext.ScanAsync<BattleshipBoard>(conditions);
 

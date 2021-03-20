@@ -24,11 +24,18 @@ namespace BattleshipStateTracker.Controllers
             return new string[] { "value1", "value2" };
         }
 
-        // GET api/values/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        // GET api/values/name/1/3
+        [HttpGet("{boardName}/{xPosition}/{yPosition}")]
+        public string Get(string boardName, int xPosition, int yPosition)
         {
-            return "value";
+            Console.WriteLine("A");
+            Console.WriteLine(boardName);
+            Console.WriteLine(xPosition);
+            Console.WriteLine(yPosition);
+            Console.WriteLine("B");
+            AttackPosition attackPosition = new AttackPosition { XPosition = xPosition, YPosition = yPosition };
+            Console.WriteLine("C");
+            return _battleshipService.Attack(boardName, attackPosition);
         }
 
         // POST api/values
