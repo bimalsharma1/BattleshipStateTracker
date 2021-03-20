@@ -21,20 +21,14 @@ namespace BattleshipStateTracker.Controllers
         [HttpGet]
         public IEnumerable<string> Get()
         {
-            return new string[] { "value1", "value2" };
+            return new string[] { "This is the Battleship State Tracker", "value2" };
         }
 
         // GET api/values/name/1/3
         [HttpGet("{boardName}/{xPosition}/{yPosition}")]
         public string Get(string boardName, int xPosition, int yPosition)
         {
-            Console.WriteLine("A");
-            Console.WriteLine(boardName);
-            Console.WriteLine(xPosition);
-            Console.WriteLine(yPosition);
-            Console.WriteLine("B");
             AttackPosition attackPosition = new AttackPosition { XPosition = xPosition, YPosition = yPosition };
-            Console.WriteLine("C");
             return _battleshipService.Attack(boardName, attackPosition);
         }
 
@@ -55,12 +49,6 @@ namespace BattleshipStateTracker.Controllers
         public void Put([FromBody] Ship ship)
         {
             _battleshipService.AddBattleship(ship);
-        }
-
-        // DELETE api/values/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
         }
     }
 }

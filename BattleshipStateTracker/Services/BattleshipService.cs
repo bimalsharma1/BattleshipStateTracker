@@ -63,13 +63,14 @@ namespace BattleshipStateTracker.Controllers.Services
 
         private List<Position> PlaceShipOnBoard(List<Position> board, Ship ship)
         {
-            for (int i = ship.StartPosition.XPosition; i <= ship.EndPosition.XPosition; i++)
+            var xStart = ship.StartPosition.XPosition < ship.EndPosition.XPosition ? ship.StartPosition.XPosition : ship.EndPosition.XPosition;
+            var xEnd = ship.StartPosition.XPosition > ship.EndPosition.XPosition ? ship.StartPosition.XPosition : ship.EndPosition.XPosition;
+            var yStart = ship.StartPosition.YPosition < ship.EndPosition.YPosition ? ship.StartPosition.YPosition : ship.EndPosition.YPosition;
+            var yEnd = ship.StartPosition.YPosition > ship.EndPosition.YPosition ? ship.StartPosition.YPosition : ship.EndPosition.YPosition;
+            foreach (var position in board)
             {
-                for (int j = ship.StartPosition.YPosition; j <= ship.EndPosition.YPosition; j++)
-                {
-                    var currentBoard = board.FirstOrDefault(b => b.XPosition == i && b.YPosition == j);
-                    currentBoard.HasShip = true;
-                }
+                position.HasShip = position.XPosition >= xStart && position.XPosition <= xEnd
+                                    && position.YPosition >= yStart && position.YPosition <= yEnd;
             }
             Console.WriteLine(JsonConvert.SerializeObject(board));
             return board;
@@ -77,16 +78,11 @@ namespace BattleshipStateTracker.Controllers.Services
 
         public string Attack(string boardName, AttackPosition position)
         {
-            Console.WriteLine("A1");
             var boards = _repositotyService.GetBoards(boardName).Result;
-            Console.WriteLine("A2");
             var board = boards.FirstOrDefault();
-            Console.WriteLine("A3");
             Console.WriteLine(JsonConvert.SerializeObject(board));
             var hitPosition = board.Board.FirstOrDefault(b => b.XPosition == position.XPosition && b.YPosition == position.YPosition);
-            Console.WriteLine("A4");
             Console.WriteLine(JsonConvert.SerializeObject(hitPosition));
-            Console.WriteLine("A5");
             return hitPosition != null && hitPosition.HasShip ? "Hit" : "Miss";
         }
     }

@@ -62,7 +62,6 @@ namespace BattleshipStateTracker.Services
 				Id = name,
                 Board = board
             };
-			Console.WriteLine("Adding to table");
 			Console.WriteLine(JsonConvert.SerializeObject(battleshipBoard));
 			// var _lps = JsonConvert.DeserializeObject<LP>(lp);
 			try
@@ -70,8 +69,7 @@ namespace BattleshipStateTracker.Services
 				await DDBContext.SaveAsync(battleshipBoard);
 			} catch (Exception ex)
             {
-				Console.WriteLine(ex.Message);
-				Console.WriteLine("After error message");
+				throw new Exception(ex.Message);
             }
 		}
 
