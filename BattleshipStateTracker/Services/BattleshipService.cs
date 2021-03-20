@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace BattleshipStateTracker.Controllers.Services
 {
-    public class BattleshipService
+    public class BattleshipService : IBattleshipService
     {
         private IRepositoryService _repositotyService;
 
@@ -21,6 +21,8 @@ namespace BattleshipStateTracker.Controllers.Services
         public void CreateBoard(string playerName, int boardSize)
         {
             _board = new bool[boardSize, boardSize];
+            Console.WriteLine("create board");
+            Console.WriteLine(_board.ToString());
             _repositotyService.CreateBoard(playerName, _board);
         }
 

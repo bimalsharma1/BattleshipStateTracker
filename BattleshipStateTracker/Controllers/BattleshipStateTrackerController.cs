@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BattleshipStateTracker.Controllers.Services;
 using BattleshipStateTracker.Interfaces;
-using BattleshipStateTracker.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BattleshipStateTracker.Controllers
@@ -12,6 +10,12 @@ namespace BattleshipStateTracker.Controllers
     [Route("api/[controller]")]
     public class BattleshipStateTrackerController : ControllerBase
     {
+        private IBattleshipService _battleshipService;
+
+        public BattleshipStateTrackerController(IBattleshipService battleshipService)
+        {
+            _battleshipService = battleshipService;
+        }
         // GET api/values
         [HttpGet]
         public IEnumerable<string> Get()
@@ -27,11 +31,14 @@ namespace BattleshipStateTracker.Controllers
         }
 
         // POST api/values
+        // POST api/values
         [HttpPost]
-        public string Post([FromBody] string name, [FromServices] IBattleshipService battleshipService)
+        public string Post([FromBody] string name)
         {
             const int boardSize = 10; // Fix board size
-            battleshipService.CreateBoard(name, boardSize);
+            Console.WriteLine("inside controller");
+            _battleshipService.CreateBoard(name, boardSize);
+            Console.WriteLine("success");
             return "success";
         }
 
@@ -39,7 +46,6 @@ namespace BattleshipStateTracker.Controllers
         [HttpPut("{id}")]
         public void Put(int id, [FromBody]string value)
         {
-           
         }
 
         // DELETE api/values/5

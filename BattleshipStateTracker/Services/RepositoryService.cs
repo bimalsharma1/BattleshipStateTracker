@@ -4,8 +4,9 @@ using Amazon.DynamoDBv2.DataModel;
 using System.Threading.Tasks;
 using BattleshipStateTracker.Models;
 using BattleshipStateTracker.Interfaces;
+using System;
 
-namespace AWSServerlessReact.Services
+namespace BattleshipStateTracker.Services
 {
 	public class RepositoryService: IRepositoryService
 	{
@@ -58,8 +59,15 @@ namespace AWSServerlessReact.Services
                 Name = name,
                 Board = board
             };
-            // var _lps = JsonConvert.DeserializeObject<LP>(lp);
-            await DDBContext.SaveAsync<BattleshipBoard>(battleshipBoard);
+			Console.WriteLine("Adding to table");
+			// var _lps = JsonConvert.DeserializeObject<LP>(lp);
+			try
+			{
+				await DDBContext.SaveAsync<BattleshipBoard>(battleshipBoard);
+			} catch (Exception ex)
+            {
+				Console.WriteLine(ex.Message);
+            }
 			// you can add scan conditions, or leave empty
 			//	var search = DDBContext.ScanAsync<BattleshipBoard>(conditions);
 			//return await search.GetRemainingAsync();
