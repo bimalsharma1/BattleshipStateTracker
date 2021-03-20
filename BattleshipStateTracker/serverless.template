@@ -1,0 +1,151 @@
+{
+  "AWSTemplateFormatVersion": "2010-09-09",
+  "Transform": "AWS::Serverless-2016-10-31",
+  "Description": "An AWS Serverless Application that uses the ASP.NET Core framework running in Amazon Lambda.",
+  "Globals": {
+    "Api": {
+        "Cors": {
+        "AllowMethods": "'DELETE,GET,HEAD,OPTIONS,PATCH,POST,PUT'",
+        "AllowHeaders": "'Content-Type,X-Amz-Date,X-Amz-Security-Token,Authorization,X-Api-Key,X-Requested-With,Accept,Access-Control-Allow-Methods,Access-Control-Allow-Origin,Access-Control-Allow-Headers'",
+        "AllowOrigin": "'*'"
+      }
+    }
+  },
+  "Parameters": {
+    "ShouldCreateTable": {
+      "Type": "String",
+      "Default": "true",
+      "AllowedValues": [
+        "true",
+        "false"
+      ],
+      "Description": "If true then the DynamoDB LPging table will be created with the CloudFormation stack."
+    },
+    "BattleshipTableName": {
+      "Type": "String",
+      "Default": "BattleshipTable",
+      "Description": "Name of DynamoDB table used to store the Battleship user information. If left blank a new table will be created.",
+      "MinLength": "0"
+    },
+     "ReadCapacity": {
+      "Type": "Number",
+      "Description": "Read capacity for the DynamoDB LP table.",
+      "Default": "3",
+      "MinValue": 1
+    },
+    "WriteCapacity": {
+      "Type": "Number",
+      "Description": "Write capacity for the DynamoDB LP table.",
+      "Default": "3",
+      "MinValue": 1
+    }
+  },
+  "Conditions": {
+     "CreateBattleshipTable": {
+      "Fn::Equals": [
+        {
+          "Ref": "ShouldCreateTable"
+        },
+        "true"
+      ]
+    },
+    "TableNameGenerated": {
+      "Fn::Equals": [
+        {
+          "Ref": "BattleshipTableName"
+        },
+        ""
+      ]
+    }
+  },
+  "Resources": {
+    "AspNetCoreFunction": {
+      "Type": "AWS::Serverless::Function",
+      "Properties": {
+        "Handler": "BattleshipStateTracker::BattleshipStateTracker.LambdaEntryPoint::FunctionHandlerAsync",
+        "Runtime": "dotnetcore3.1",
+        "CodeUri": "",
+        "MemorySize": 256,
+        "Timeout": 30,
+        "Role": null,
+        "Policies": [
+          "AWSLambda_FullAccess"
+        ],
+        "Events": {
+          "ProxyResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/{proxy+}",
+              "Method": "ANY"
+            }
+          },
+          "RootResource": {
+            "Type": "Api",
+            "Properties": {
+              "Path": "/",
+              "Method": "ANY"
+            }
+          }
+        }
+      }
+    },
+    "BattleshipTable": {
+      "Type": "AWS::DynamoDB::Table",
+      "Condition": "CreateBattleshipTable",
+      "Properties": {
+        "TableName": {
+          "Fn::If": [
+            "TableNameGenerated",
+            {
+              "Ref": "AWS::NoValue"
+            },
+            {
+              "Ref": "BattleshipTableName"
+            }
+          ]
+        },
+        "AttributeDefinitions": [
+          {
+            "AttributeName": "Id",
+            "AttributeType": "S"
+          }
+        ],
+        "KeySchema": [
+          {
+            "AttributeName": "Id",
+            "KeyType": "HASH"
+          }
+        ],
+        "ProvisionedThroughput": {
+          "ReadCapacityUnits": {
+            "Ref": "ReadCapacity"
+          },
+          "WriteCapacityUnits": {
+            "Ref": "WriteCapacity"
+          }
+        }
+      }
+    }
+  },
+  "Outputs": {
+    "ApiURL": {
+      "Description": "API endpoint URL for Prod environment",
+      "Value": {
+        "Fn::Sub": "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/"
+      }
+    },
+    "BattleshipTable": {
+      "Value": {
+        "Fn::If": [
+          "CreateBattleshipTable",
+          {
+            "Ref": "BattleshipTable"
+          },
+          {
+            "Ref": "BattleshipTableName"
+          }
+        ]
+      }
+    }
+  }
+}
