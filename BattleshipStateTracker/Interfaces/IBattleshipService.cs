@@ -6,8 +6,8 @@ namespace BattleshipStateTracker.Interfaces
 {
 	public interface IBattleshipService
 	{
-		public void CreateBoard(string playerName, int boardSize);
-		public Task AddBattleship(Ship ship);
+		public string CreateBoard(string playerName, int boardSize);
+		public Task<string> AddBattleship(Ship ship);
 		public string Attack(string board, AttackPosition position);
 	}
 }

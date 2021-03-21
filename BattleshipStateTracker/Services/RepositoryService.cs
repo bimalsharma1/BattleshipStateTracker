@@ -62,15 +62,8 @@ namespace BattleshipStateTracker.Services
 				Id = name,
                 Board = board
             };
-			Console.WriteLine(JsonConvert.SerializeObject(battleshipBoard));
-			// var _lps = JsonConvert.DeserializeObject<LP>(lp);
-			try
-			{
-				await DDBContext.SaveAsync(battleshipBoard);
-			} catch (Exception ex)
-            {
-				throw new Exception(ex.Message);
-            }
+
+			await DDBContext.SaveAsync(battleshipBoard);
 		}
 
 		public async Task<IEnumerable<BattleshipBoard>> GetBoards(string boardName)

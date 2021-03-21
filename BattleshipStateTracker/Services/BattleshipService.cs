@@ -18,30 +18,38 @@ namespace BattleshipStateTracker.Controllers.Services
         }
 
         // Board size is customisable, it will always be a square grid.
-        public void CreateBoard(string playerName, int boardSize)
+        public string CreateBoard(string playerName, int boardSize)
         {
-            List<Position> board = new List<Position>();
-            for (int i = 1; i <= boardSize; i++)
+            try
             {
-                for (int j = 1; j <= boardSize; j++)
+                var board = new List<Position>();
+                for (int i = 1; i <= boardSize; i++)
                 {
-                    board.Add(new Position
+                    for (int j = 1; j <= boardSize; j++)
                     {
-                        XPosition = i,
-                        YPosition = j,
-                        HasShip = false
-                    });
+                        board.Add(new Position
+                        {
+                            XPosition = i,
+                            YPosition = j,
+                            HasShip = false
+                        });
+                    }
                 }
+                _repositotyService.CreateBoard(playerName, board);
+                return "success";
+            } catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+                return $"The board already exists.";
             }
-            _repositotyService.CreateBoard(playerName, board);
         }
 
-        public async Task AddBattleship(Ship ship)
+        public async Task<string> AddBattleship(Ship ship)
         {
-            
             try
             {
                 var boards = _repositotyService.GetBoards(ship.BoardName).Result;
+                Console.WriteLine(JsonConvert.SerializeObject(boards));
                 var board = boards.FirstOrDefault();
                 board.Ships = new List<Ship>
                 {
@@ -50,10 +58,12 @@ namespace BattleshipStateTracker.Controllers.Services
 
                 board.Board = PlaceShipOnBoard(board.Board, ship);
                 await _repositotyService.AddShip(board);
+                return "success";
 
             } catch (Exception ex)
             {
-                throw new InvalidOperationException($"Cannot find the board {ex.Message}");
+                Console.WriteLine(ex.Message);
+                return $"Cannot find the board, please create the board";
             }
         }
 
@@ -76,10 +86,16 @@ namespace BattleshipStateTracker.Controllers.Services
         {
             var boards = _repositotyService.GetBoards(boardName).Result;
             var board = boards.FirstOrDefault();
-            Console.WriteLine(JsonConvert.SerializeObject(board));
             var hitPosition = board.Board.FirstOrDefault(b => b.XPosition == position.XPosition && b.YPosition == position.YPosition);
             Console.WriteLine(JsonConvert.SerializeObject(hitPosition));
-            return hitPosition != null && hitPosition.HasShip ? "Hit" : "Miss";
+
+            if (hitPosition == null)
+            {
+                Console.WriteLine("An error has occurred, please try again or contact the IT team.");
+                return "An error has occurred, please try again or contact the IT team.";
+            }
+
+            return hitPosition.HasShip ? "Hit" : "Miss";
         }
     }
 }
