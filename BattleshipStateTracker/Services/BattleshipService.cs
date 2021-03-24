@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.VisualBasic;
 
 namespace BattleshipStateTracker.Controllers.Services
 {
@@ -82,20 +83,28 @@ namespace BattleshipStateTracker.Controllers.Services
             return board;
         }
 
-        public string Attack(string boardName, AttackPosition position)
+        public string Attack(Attack attackPosition)
         {
-            var boards = _repositotyService.GetBoards(boardName).Result;
-            var board = boards.FirstOrDefault();
-            var hitPosition = board.Board.FirstOrDefault(b => b.XPosition == position.XPosition && b.YPosition == position.YPosition);
-            Console.WriteLine(JsonConvert.SerializeObject(hitPosition));
-
-            if (hitPosition == null)
+            const int minBoardSize = 1;
+            const int maxBoardSize = 10;
+            if (attackPosition.AttackPosition.XPosition < minBoardSize 
+                || attackPosition.AttackPosition.XPosition > maxBoardSize 
+                || attackPosition.AttackPosition.YPosition < minBoardSize 
+                || attackPosition.AttackPosition.YPosition > maxBoardSize)
             {
-                Console.WriteLine("An error has occurred, please try again or contact the IT team.");
-                return "An error has occurred, please try again or contact the IT team.";
+                return "Invalid attack position, please try again";
             }
 
-            return hitPosition.HasShip ? "Hit" : "Miss";
+            var boards = _repositotyService.GetBoards(attackPosition.BoardName).Result;
+            var board = boards.FirstOrDefault();
+            var hitPosition = board?.Board.FirstOrDefault(b => b.XPosition == attackPosition.AttackPosition.XPosition 
+                                                               && b.YPosition == attackPosition.AttackPosition.YPosition);
+            Console.WriteLine(JsonConvert.SerializeObject(hitPosition));
+
+            if (hitPosition != null) return hitPosition.HasShip ? "Hit" : "Miss";
+            Console.WriteLine("An error has occurred, please try again or contact the IT team.");
+            return "An error has occurred, please try again or contact the IT team.";
+
         }
     }
 }

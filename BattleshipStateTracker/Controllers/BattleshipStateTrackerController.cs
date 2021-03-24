@@ -27,8 +27,16 @@ namespace BattleshipStateTracker.Controllers
         [HttpGet("{boardName}/{xPosition}/{yPosition}")]
         public string Get(string boardName, int xPosition, int yPosition)
         {
-            AttackPosition attackPosition = new AttackPosition { XPosition = xPosition, YPosition = yPosition };
-            return _battleshipService.Attack(boardName, attackPosition);
+            var attack = new Attack
+            {
+                BoardName  = boardName, 
+                AttackPosition = new AttackPosition
+                {
+                    XPosition = xPosition, 
+                    YPosition = yPosition
+                }
+            };
+            return _battleshipService.Attack(attack);
         }
 
         // POST api/BattleshipStateTracker
@@ -44,6 +52,14 @@ namespace BattleshipStateTracker.Controllers
         public string Put([FromBody] Ship ship)
         {
             return _battleshipService.AddBattleship(ship).Result;
+        }
+
+        // PUT api/BattleshipStateTracker/attack
+        [HttpPut]
+        [Route("attack")]
+        public string Attack([FromBody] Attack attack)
+        {
+            return _battleshipService.Attack(attack);
         }
     }
 }

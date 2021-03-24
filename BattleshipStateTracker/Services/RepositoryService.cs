@@ -73,7 +73,6 @@ namespace BattleshipStateTracker.Services
 				new ScanCondition("Id", ScanOperator.Equal, boardName?.Trim())
 			};
 			var search = DDBContext.ScanAsync<BattleshipBoard>(conditions);
-
             return await search.GetRemainingAsync();
         }
 

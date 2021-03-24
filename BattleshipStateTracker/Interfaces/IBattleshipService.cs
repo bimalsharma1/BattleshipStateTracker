@@ -8,6 +8,6 @@ namespace BattleshipStateTracker.Interfaces
 	{
 		public string CreateBoard(string playerName, int boardSize);
 		public Task<string> AddBattleship(Ship ship);
-		public string Attack(string board, AttackPosition position);
+		public string Attack(Attack attack);
 	}
 }
