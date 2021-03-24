@@ -5,9 +5,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 using System.Threading.Tasks;
 using BattleshipStateTracker.Models;
 using BattleshipStateTracker.Interfaces;
-using System;
 using System.Collections.Generic;
-using Newtonsoft.Json;
 
 namespace BattleshipStateTracker.Services
 {

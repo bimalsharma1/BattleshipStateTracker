@@ -94,5 +94,21 @@ namespace BattleshipStateTracker.Tests
             Assert.True(response.MultiValueHeaders.ContainsKey("Content-Type"));
             Assert.Equal("text/plain; charset=utf-8", response.MultiValueHeaders["Content-Type"][0]);
         }
+
+        [Fact]
+        public async Task TestAttackOutsideBoard()
+        {
+            var lambdaFunction = new LambdaEntryPoint();
+            var requestStr = File.ReadAllText("./SampleRequests/BattleshipStateTrackerController-Attack.json");
+            var request = JsonConvert.DeserializeObject<APIGatewayProxyRequest>(requestStr);
+            request.PathParameters["proxy"] = "api/BattleshipStateTracker/Bimal1/16/35";
+            var context = new TestLambdaContext();
+            var response = await lambdaFunction.FunctionHandlerAsync(request, context);
+
+            Assert.Equal(200, response.StatusCode);
+            Assert.Equal("Invalid attack position, please try again", response.Body);
+            Assert.True(response.MultiValueHeaders.ContainsKey("Content-Type"));
+            Assert.Equal("text/plain; charset=utf-8", response.MultiValueHeaders["Content-Type"][0]);
+        }
     }
 }

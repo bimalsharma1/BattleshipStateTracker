@@ -5,17 +5,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.VisualBasic;
 
 namespace BattleshipStateTracker.Controllers.Services
 {
     public class BattleshipService : IBattleshipService
     {
-        private IRepositoryService _repositotyService;
+        private IRepositoryService _repositoryService;
 
         public BattleshipService(IRepositoryService repositoryService)
         {
-            _repositotyService = repositoryService;
+            _repositoryService = repositoryService;
         }
 
         // Board size is customisable, it will always be a square grid.
@@ -36,7 +35,7 @@ namespace BattleshipStateTracker.Controllers.Services
                         });
                     }
                 }
-                _repositotyService.CreateBoard(playerName, board);
+                _repositoryService.CreateBoard(playerName, board);
                 return "success";
             } catch (Exception ex)
             {
@@ -49,7 +48,7 @@ namespace BattleshipStateTracker.Controllers.Services
         {
             try
             {
-                var boards = _repositotyService.GetBoards(ship.BoardName).Result;
+                var boards = _repositoryService.GetBoards(ship.BoardName).Result;
                 Console.WriteLine(JsonConvert.SerializeObject(boards));
                 var board = boards.FirstOrDefault();
                 board.Ships = new List<Ship>
@@ -58,7 +57,7 @@ namespace BattleshipStateTracker.Controllers.Services
                 };
 
                 board.Board = PlaceShipOnBoard(board.Board, ship);
-                await _repositotyService.AddShip(board);
+                await _repositoryService.AddShip(board);
                 return "success";
 
             } catch (Exception ex)
@@ -95,7 +94,7 @@ namespace BattleshipStateTracker.Controllers.Services
                 return "Invalid attack position, please try again";
             }
 
-            var boards = _repositotyService.GetBoards(attackPosition.BoardName).Result;
+            var boards = _repositoryService.GetBoards(attackPosition.BoardName).Result;
             var board = boards.FirstOrDefault();
             var hitPosition = board?.Board.FirstOrDefault(b => b.XPosition == attackPosition.AttackPosition.XPosition 
                                                                && b.YPosition == attackPosition.AttackPosition.YPosition);
