@@ -29,8 +29,8 @@ namespace BattleshipStateTracker.Controllers
         {
             var attack = new Attack
             {
-                BoardName  = boardName, 
-                AttackPosition = new AttackPosition
+                BoardName  = boardName,
+                AttackPosition = new Position
                 {
                     XPosition = xPosition, 
                     YPosition = yPosition

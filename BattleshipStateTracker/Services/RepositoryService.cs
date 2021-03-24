@@ -53,7 +53,7 @@ namespace BattleshipStateTracker.Services
 			this.DDBContext = new DynamoDBContext(ddbClient, config);
 		}
 
-		public async Task CreateBoard(string name, List<Position> board)
+		public async Task CreateBoard(string name, List<ShipPosition> board)
 		{
             BattleshipBoard battleshipBoard = new BattleshipBoard
             {

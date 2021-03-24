@@ -9,8 +9,8 @@ namespace BattleshipStateTracker.Models
         [DataMember(Name = "shipName")]
         public string ShipName { get; set; }
         [DataMember(Name = "startPosition")]
-        public AttackPosition StartPosition { get; set; }
+        public Position StartPosition { get; set; }
         [DataMember(Name = "endPosition")]
-        public AttackPosition EndPosition { get; set; }
+        public Position EndPosition { get; set; }
     }
 }

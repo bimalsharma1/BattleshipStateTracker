@@ -1,12 +1,12 @@
-﻿using BattleshipStateTracker.Interfaces;
-using BattleshipStateTracker.Models;
-using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using BattleshipStateTracker.Interfaces;
+using BattleshipStateTracker.Models;
+using Newtonsoft.Json;
 
-namespace BattleshipStateTracker.Controllers.Services
+namespace BattleshipStateTracker.Services
 {
     public class BattleshipService : IBattleshipService
     {
@@ -22,15 +22,17 @@ namespace BattleshipStateTracker.Controllers.Services
         {
             try
             {
-                var board = new List<Position>();
-                for (int i = 1; i <= boardSize; i++)
+                var board = new List<ShipPosition>();
+                for (var i = 1; i <= boardSize; i++)
                 {
-                    for (int j = 1; j <= boardSize; j++)
+                    for (var j = 1; j <= boardSize; j++)
                     {
-                        board.Add(new Position
+                        board.Add(new ShipPosition
                         {
-                            XPosition = i,
-                            YPosition = j,
+                            Position = new Position() {
+                                XPosition = i,
+                                YPosition = j
+                            },
                             HasShip = false
                         });
                     }
@@ -51,6 +53,7 @@ namespace BattleshipStateTracker.Controllers.Services
                 var boards = _repositoryService.GetBoards(ship.BoardName).Result;
                 Console.WriteLine(JsonConvert.SerializeObject(boards));
                 var board = boards.FirstOrDefault();
+                if (board == null) return "failed to add ship";
                 board.Ships = new List<Ship>
                 {
                     ship
@@ -58,6 +61,7 @@ namespace BattleshipStateTracker.Controllers.Services
 
                 board.Board = PlaceShipOnBoard(board.Board, ship);
                 await _repositoryService.AddShip(board);
+
                 return "success";
 
             } catch (Exception ex)
@@ -67,7 +71,7 @@ namespace BattleshipStateTracker.Controllers.Services
             }
         }
 
-        private List<Position> PlaceShipOnBoard(List<Position> board, Ship ship)
+        private List<ShipPosition> PlaceShipOnBoard(List<ShipPosition> board, Ship ship)
         {
             var xStart = ship.StartPosition.XPosition < ship.EndPosition.XPosition ? ship.StartPosition.XPosition : ship.EndPosition.XPosition;
             var xEnd = ship.StartPosition.XPosition > ship.EndPosition.XPosition ? ship.StartPosition.XPosition : ship.EndPosition.XPosition;
@@ -75,8 +79,8 @@ namespace BattleshipStateTracker.Controllers.Services
             var yEnd = ship.StartPosition.YPosition > ship.EndPosition.YPosition ? ship.StartPosition.YPosition : ship.EndPosition.YPosition;
             foreach (var position in board)
             {
-                position.HasShip = position.XPosition >= xStart && position.XPosition <= xEnd
-                                    && position.YPosition >= yStart && position.YPosition <= yEnd;
+                position.HasShip = position.Position.XPosition >= xStart && position.Position.XPosition <= xEnd
+                                    && position.Position.YPosition >= yStart && position.Position.YPosition <= yEnd;
             }
             Console.WriteLine(JsonConvert.SerializeObject(board));
             return board;
@@ -96,8 +100,8 @@ namespace BattleshipStateTracker.Controllers.Services
 
             var boards = _repositoryService.GetBoards(attackPosition.BoardName).Result;
             var board = boards.FirstOrDefault();
-            var hitPosition = board?.Board.FirstOrDefault(b => b.XPosition == attackPosition.AttackPosition.XPosition 
-                                                               && b.YPosition == attackPosition.AttackPosition.YPosition);
+            var hitPosition = board?.Board.FirstOrDefault(b => b.Position.XPosition == attackPosition.AttackPosition.XPosition 
+                                                               && b.Position.YPosition == attackPosition.AttackPosition.YPosition);
             Console.WriteLine(JsonConvert.SerializeObject(hitPosition));
 
             if (hitPosition != null) return hitPosition.HasShip ? "Hit" : "Miss";

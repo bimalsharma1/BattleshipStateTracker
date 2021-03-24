@@ -7,6 +7,6 @@ namespace BattleshipStateTracker.Models
         [DataMember(Name = "boardName")]
         public string BoardName { get; set; }
         [DataMember(Name = "attackPosition")]
-        public AttackPosition AttackPosition { get; set; }
+        public Position AttackPosition { get; set; }
     }
 }
