@@ -70,6 +70,7 @@ namespace BattleshipStateTracker.Tests
             var lambdaFunction = new LambdaEntryPoint();
             var requestStr = File.ReadAllText("./SampleRequests/BattleshipStateTrackerController-Attack.json");
             var request = JsonConvert.DeserializeObject<APIGatewayProxyRequest>(requestStr);
+            request.Headers = headers;
             var context = new TestLambdaContext();
             var response = await lambdaFunction.FunctionHandlerAsync(request, context);
 
@@ -85,7 +86,8 @@ namespace BattleshipStateTracker.Tests
             var lambdaFunction = new LambdaEntryPoint();
             var requestStr = File.ReadAllText("./SampleRequests/BattleshipStateTrackerController-Attack.json");
             var request = JsonConvert.DeserializeObject<APIGatewayProxyRequest>(requestStr);
-            request.PathParameters["proxy"] = "api/BattleshipStateTracker/Bimal1/6/5";
+            request.Body = "{\"boardName\":\"Bimal1\",\"attackPosition\":{\"xPosition\":4,\"yPosition\":7}}";
+            request.Headers = headers;
             var context = new TestLambdaContext();
             var response = await lambdaFunction.FunctionHandlerAsync(request, context);
 
@@ -101,7 +103,8 @@ namespace BattleshipStateTracker.Tests
             var lambdaFunction = new LambdaEntryPoint();
             var requestStr = File.ReadAllText("./SampleRequests/BattleshipStateTrackerController-Attack.json");
             var request = JsonConvert.DeserializeObject<APIGatewayProxyRequest>(requestStr);
-            request.PathParameters["proxy"] = "api/BattleshipStateTracker/Bimal1/16/35";
+            request.Body = "{\"boardName\":\"Bimal1\",\"attackPosition\":{\"xPosition\":14,\"yPosition\":7}}";
+            request.Headers = headers;
             var context = new TestLambdaContext();
             var response = await lambdaFunction.FunctionHandlerAsync(request, context);
 

@@ -30,5 +30,5 @@
     "httpMethod": "PUT",
     "apiId": "t2yh6sjnmk"
   },
-  "body": "{\n    \"boardName\": \"Bimal1\",\n    \"shipName\": \"HMAS Canberra\",\n    \"startPosition\": {\n        \"xPosition\": 1,\n        \"yPosition\": 3\n    },\n    \"endPosition\": {\n        \"xPosition\": 2,\n        \"yPosition\": 9\n    }\n}"
+  "body": "{\n    \"boardName\": \"Bimal1\",\n    \"orientation\": \"vertical\",\n   \"shipName\": \"HMAS Canberra\",\n    \"startPosition\": {\n        \"xPosition\": 1,\n        \"yPosition\": 3\n    },\n    \"endPosition\": {\n        \"xPosition\": 1,\n        \"yPosition\": 9\n    }\n}"
 }

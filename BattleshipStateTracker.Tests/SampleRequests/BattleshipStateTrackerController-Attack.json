@@ -1,11 +1,11 @@
 {
   "resource": "/{proxy+}",
   "path": "/api/BattleshipStateTracker",
-  "httpMethod": "GET",
+  "httpMethod": "PUT",
   "headers": null,
   "queryStringParameters": null,
   "pathParameters": {
-    "proxy": "api/BattleshipStateTracker/Bimal1/1/5"
+    "proxy": "api/BattleshipStateTracker/attack"
   },
   "stageVariables": null,
   "requestContext": {
@@ -27,8 +27,8 @@
       "user": "AAAAAAAAAAAA"
     },
     "resourcePath": "/{proxy+}",
-    "httpMethod": "GET",
+    "httpMethod": "PUT",
     "apiId": "t2yh6sjnmk"
   },
-  "body": null
+  "body": "{\"boardName\":\"Bimal1\",\"attackPosition\":{\"xPosition\":1,\"yPosition\":7}}"
 }
