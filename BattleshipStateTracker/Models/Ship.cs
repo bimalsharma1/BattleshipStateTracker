@@ -12,5 +12,7 @@ namespace BattleshipStateTracker.Models
         public Position StartPosition { get; set; }
         [DataMember(Name = "endPosition")]
         public Position EndPosition { get; set; }
+        [DataMember(Name = "orientation")]
+        public string Orientation { get; set; }
     }
 }

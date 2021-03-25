@@ -32,8 +32,7 @@ namespace BattleshipStateTracker.Services
                             Position = new Position() {
                                 XPosition = i,
                                 YPosition = j
-                            },
-                            HasShip = false
+                            }
                         });
                     }
                 }
@@ -59,7 +58,6 @@ namespace BattleshipStateTracker.Services
                     ship
                 };
 
-                board.Board = PlaceShipOnBoard(board.Board, ship);
                 await _repositoryService.AddShip(board);
 
                 return "success";
@@ -69,21 +67,6 @@ namespace BattleshipStateTracker.Services
                 Console.WriteLine(ex.Message);
                 return $"Cannot find the board, please create the board";
             }
-        }
-
-        private List<ShipPosition> PlaceShipOnBoard(List<ShipPosition> board, Ship ship)
-        {
-            var xStart = ship.StartPosition.XPosition < ship.EndPosition.XPosition ? ship.StartPosition.XPosition : ship.EndPosition.XPosition;
-            var xEnd = ship.StartPosition.XPosition > ship.EndPosition.XPosition ? ship.StartPosition.XPosition : ship.EndPosition.XPosition;
-            var yStart = ship.StartPosition.YPosition < ship.EndPosition.YPosition ? ship.StartPosition.YPosition : ship.EndPosition.YPosition;
-            var yEnd = ship.StartPosition.YPosition > ship.EndPosition.YPosition ? ship.StartPosition.YPosition : ship.EndPosition.YPosition;
-            foreach (var position in board)
-            {
-                position.HasShip = position.Position.XPosition >= xStart && position.Position.XPosition <= xEnd
-                                    && position.Position.YPosition >= yStart && position.Position.YPosition <= yEnd;
-            }
-            Console.WriteLine(JsonConvert.SerializeObject(board));
-            return board;
         }
 
         public string Attack(Attack attackPosition)
@@ -100,13 +83,27 @@ namespace BattleshipStateTracker.Services
 
             var boards = _repositoryService.GetBoards(attackPosition.BoardName).Result;
             var board = boards.FirstOrDefault();
-            var hitPosition = board?.Board.FirstOrDefault(b => b.Position.XPosition == attackPosition.AttackPosition.XPosition 
-                                                               && b.Position.YPosition == attackPosition.AttackPosition.YPosition);
-            Console.WriteLine(JsonConvert.SerializeObject(hitPosition));
+            var shipPosition = board?.Ships.FirstOrDefault();
+            Console.WriteLine(JsonConvert.SerializeObject(shipPosition));
 
-            if (hitPosition != null) return hitPosition.HasShip ? "Hit" : "Miss";
-            Console.WriteLine("An error has occurred, please try again or contact the IT team.");
-            return "An error has occurred, please try again or contact the IT team.";
+            if (shipPosition == null)
+            {
+                Console.WriteLine("An error has occurred, invalid ship position.");
+                return "An error has occurred, invalid ship position.";
+            }
+
+            Console.WriteLine(shipPosition.Orientation);
+
+            var isHit = string.Equals(shipPosition.Orientation, "vertical", StringComparison.InvariantCultureIgnoreCase)
+            ? attackPosition.AttackPosition.XPosition == shipPosition.StartPosition.XPosition &&
+              attackPosition.AttackPosition.YPosition >= shipPosition.StartPosition.YPosition &&
+              attackPosition.AttackPosition.YPosition <= shipPosition.EndPosition.YPosition
+            : attackPosition.AttackPosition.YPosition == shipPosition.StartPosition.YPosition &&
+              attackPosition.AttackPosition.XPosition >= shipPosition.StartPosition.XPosition &&
+              attackPosition.AttackPosition.XPosition <= shipPosition.EndPosition.XPosition;
+
+             return isHit ? "Hit" : "Miss";
+            
 
         }
     }
