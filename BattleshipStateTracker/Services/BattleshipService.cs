@@ -10,7 +10,9 @@ namespace BattleshipStateTracker.Services
 {
     public class BattleshipService : IBattleshipService
     {
-        private IRepositoryService _repositoryService;
+        private readonly IRepositoryService _repositoryService;
+        private const int MinBoardSize = 1;
+        private const int MaxBoardSize = 10;
 
         public BattleshipService(IRepositoryService repositoryService)
         {
@@ -49,6 +51,10 @@ namespace BattleshipStateTracker.Services
         {
             try
             {
+                if (IsInvalidShipPosition(ship))
+                {
+                    return "Invalid ship coordinates or orientation";
+                }
                 var boards = _repositoryService.GetBoards(ship.BoardName).Result;
                 Console.WriteLine(JsonConvert.SerializeObject(boards));
                 var board = boards.FirstOrDefault();
@@ -65,27 +71,21 @@ namespace BattleshipStateTracker.Services
             } catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return $"Cannot find the board, please create the board";
+                return "Cannot find the board, please create the board";
             }
         }
 
-        public string Attack(Attack attackPosition)
+        public string Attack(Attack attack)
         {
-            const int minBoardSize = 1;
-            const int maxBoardSize = 10;
-            if (attackPosition.AttackPosition.XPosition < minBoardSize 
-                || attackPosition.AttackPosition.XPosition > maxBoardSize 
-                || attackPosition.AttackPosition.YPosition < minBoardSize 
-                || attackPosition.AttackPosition.YPosition > maxBoardSize)
+            if (IsInvalidPosition(attack.AttackPosition))
             {
-                return "Invalid attack position, please try again";
+                return "Invalid attack position, please check orientation and position and try again";
             }
 
-            var boards = _repositoryService.GetBoards(attackPosition.BoardName).Result;
+            var boards = _repositoryService.GetBoards(attack.BoardName).Result;
             var board = boards.FirstOrDefault();
             var shipPosition = board?.Ships.FirstOrDefault();
             Console.WriteLine(JsonConvert.SerializeObject(shipPosition));
-
             if (shipPosition == null)
             {
                 Console.WriteLine("An error has occurred, invalid ship position.");
@@ -93,18 +93,46 @@ namespace BattleshipStateTracker.Services
             }
 
             Console.WriteLine(shipPosition.Orientation);
-
-            var isHit = string.Equals(shipPosition.Orientation, "vertical", StringComparison.InvariantCultureIgnoreCase)
-            ? attackPosition.AttackPosition.XPosition == shipPosition.StartPosition.XPosition &&
-              attackPosition.AttackPosition.YPosition >= shipPosition.StartPosition.YPosition &&
-              attackPosition.AttackPosition.YPosition <= shipPosition.EndPosition.YPosition
-            : attackPosition.AttackPosition.YPosition == shipPosition.StartPosition.YPosition &&
-              attackPosition.AttackPosition.XPosition >= shipPosition.StartPosition.XPosition &&
-              attackPosition.AttackPosition.XPosition <= shipPosition.EndPosition.XPosition;
+            var isHit = string.Equals(shipPosition.Orientation, Orientation.Vertical, StringComparison.InvariantCultureIgnoreCase)
+                        ? GetAttackStatusVerticalOrientation(attack.AttackPosition, shipPosition.StartPosition, shipPosition.EndPosition)
+                        : ShipEndPosition(attack.AttackPosition, shipPosition.StartPosition, shipPosition.EndPosition);
 
              return isHit ? "Hit" : "Miss";
-            
+        }
 
+        private bool GetAttackStatusVerticalOrientation(Position attackPosition, Position shipStartPosition, Position shipEndPosition)
+        {
+            return attackPosition.XPosition == shipStartPosition.XPosition &&
+                   attackPosition.YPosition >= shipStartPosition.YPosition &&
+                   attackPosition.YPosition <= shipEndPosition.YPosition;
+        }
+
+        private bool ShipEndPosition(Position attackPosition, Position shipStartPosition, Position shipEndPosition)
+        {
+            return attackPosition.YPosition == shipStartPosition.YPosition &&
+                   attackPosition.XPosition >= shipStartPosition.XPosition &&
+                   attackPosition.XPosition <= shipEndPosition.XPosition;
+        }
+
+        private bool IsInvalidShipPosition(Ship ship)
+        {
+            if ((ship.Orientation != Orientation.Vertical && ship.Orientation != Orientation.Horizontal) || IsInvalidPosition(ship.StartPosition) || IsInvalidPosition(ship.EndPosition))
+            {
+                return true;
+            }
+
+            // Assumption: The ship can be on only 1 row or column
+            return ship.Orientation == Orientation.Vertical 
+                    ? ship.StartPosition.XPosition != ship.EndPosition.XPosition
+                    : ship.StartPosition.YPosition != ship.EndPosition.YPosition;
+        }
+
+        private bool IsInvalidPosition(Position attackPosition)
+        {
+            return attackPosition.XPosition < MinBoardSize
+                   || attackPosition.XPosition > MaxBoardSize
+                   || attackPosition.YPosition < MinBoardSize
+                   || attackPosition.YPosition > MaxBoardSize;
         }
     }
 }

@@ -13,10 +13,10 @@ namespace BattleshipStateTracker.Services
 	{
 		// This const is the name of the environment variable that the serverless.template will use to set
 		// the name of the DynamoDB table used to store LPs.
-		const string TABLENAME_ENVIRONMENT_VARIABLE_LOOKUP = "BattleshipBoard";
+		const string TablenameEnvironmentVariableLookup = "BattleshipBoard";
 
 		public const string ID_QUERY_STRING_NAME = "Id";
-		IDynamoDBContext DDBContext { get; set; }
+		IDynamoDBContext DdbContext { get; set; }
 
 		/// <summary>
 		/// Constructor used for testing passing in a preconfigured DynamoDB client.
@@ -27,14 +27,14 @@ namespace BattleshipStateTracker.Services
 		{
 			// Check to see if a table name was passed in through environment variables and if so 
 			// add the table mapping.
-			var tableName = System.Environment.GetEnvironmentVariable(TABLENAME_ENVIRONMENT_VARIABLE_LOOKUP);
+			var tableName = System.Environment.GetEnvironmentVariable(TablenameEnvironmentVariableLookup);
 			if (!string.IsNullOrEmpty(tableName))
 			{
 				AWSConfigsDynamoDB.Context.TypeMappings[typeof(BattleshipBoard)] = new Amazon.Util.TypeMapping(typeof(BattleshipBoard), tableName);
 			}
 
 			var config = new DynamoDBContextConfig { Conversion = DynamoDBEntryConversion.V2 };
-			this.DDBContext = new DynamoDBContext(new AmazonDynamoDBClient(), config);
+			this.DdbContext = new DynamoDBContext(new AmazonDynamoDBClient(), config);
 		}
 
 		/// <summary>
@@ -50,7 +50,7 @@ namespace BattleshipStateTracker.Services
 			}
 
 			var config = new DynamoDBContextConfig { Conversion = DynamoDBEntryConversion.V2 };
-			this.DDBContext = new DynamoDBContext(ddbClient, config);
+			this.DdbContext = new DynamoDBContext(ddbClient, config);
 		}
 
 		public async Task CreateBoard(string name, List<ShipPosition> board)
@@ -61,7 +61,7 @@ namespace BattleshipStateTracker.Services
                 Board = board
             };
 
-			await DDBContext.SaveAsync(battleshipBoard);
+			await DdbContext.SaveAsync(battleshipBoard);
 		}
 
 		public async Task<IEnumerable<BattleshipBoard>> GetBoards(string boardName)
@@ -70,13 +70,13 @@ namespace BattleshipStateTracker.Services
 			{
 				new ScanCondition("Id", ScanOperator.Equal, boardName?.Trim())
 			};
-			var search = DDBContext.ScanAsync<BattleshipBoard>(conditions);
+			var search = DdbContext.ScanAsync<BattleshipBoard>(conditions);
             return await search.GetRemainingAsync();
         }
 
 		public async Task AddShip(BattleshipBoard board)
 		{
-			await DDBContext.SaveAsync<BattleshipBoard>(board);
+			await DdbContext.SaveAsync<BattleshipBoard>(board);
 		}
 	}
 }

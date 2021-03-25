@@ -11,6 +11,7 @@
   <ItemGroup>
     <None Remove="SampleRequests\BattleshipStateTrackerController-AddShip.json" />
     <None Remove="SampleRequests\BattleshipStateTrackerController-Attack.json" />
+    <None Remove="SampleRequests\BattleshipStateTrackerController-AttackMiss.json" />
     <None Remove="SampleRequests\BattleshipStateTrackerController-CreateBoard.json" />
     <None Remove="SampleRequests\BattleshipStateTrackerController-Get.json" />
   </ItemGroup>
@@ -22,6 +23,9 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleRequests\BattleshipStateTrackerController-Attack.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="SampleRequests\BattleshipStateTrackerController-AttackMiss.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="SampleRequests\BattleshipStateTrackerController-CreateBoard.json">
@@ -38,6 +42,7 @@
     <PackageReference Include="AWSSDK.Extensions.NETCore.Setup" Version="3.3.101" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.5.0" />
     <PackageReference Include="xunit" Version="2.3.1" />
+    <PackageReference Include="Xunit.Priority" Version="1.1.6" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.3.1" />
   </ItemGroup>
   <ItemGroup>
